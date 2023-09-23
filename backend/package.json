@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "sungkyunmungo",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2023-SWE-TEAM8/sungkyunmungo.git"
+  },
+  "author": "TEAM8",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/2023-SWE-TEAM8/sungkyunmungo/issues"
+  },
+  "homepage": "https://github.com/2023-SWE-TEAM8/sungkyunmungo#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongodb": "^6.1.0",
+    "mongoose": "^7.5.2",
+    "nodemon": "^3.0.1"
+  }
+}
