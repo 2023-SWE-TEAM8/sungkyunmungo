@@ -13,7 +13,7 @@ const userInfoSchema = new Schema({
   },
   campus: {
     type: String,
-    enum: ["자연과학 캠퍼스", "인문사회과학 캠퍼스"],
+    enum: ["자연과학캠퍼스", "인문사회과학캠퍼스"],
   },
 });
 
