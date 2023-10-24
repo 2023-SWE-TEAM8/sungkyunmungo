@@ -30,7 +30,7 @@ const productSchema = new Schema({
   condition: {
     type: String,
     enum: ["상", "중", "하"],
-    require: true,
+    required: true,
   },
   status: {
     type: String,
