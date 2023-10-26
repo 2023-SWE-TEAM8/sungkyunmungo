@@ -5,7 +5,7 @@ const {
   Types: { ObjectId },
 } = Schema;
 
-const productSchema = new Schema({
+const productSchema = Schema({
   writer: {
     type: ObjectId,
     required: true,
@@ -30,7 +30,17 @@ const productSchema = new Schema({
   condition: {
     type: String,
     enum: ["상", "중", "하"],
-    require: true,
+    required: true,
+  },
+  campus:{
+    type: String,
+    enum: ["suwon", "hyehwa"],
+    required: true,
+  },
+  major:{
+    type: String,
+    enum: ["software", "statistics"],
+    required: true,
   },
   status: {
     type: String,
@@ -40,7 +50,7 @@ const productSchema = new Schema({
   createdDt: {
     type: Date,
     default: Date.now,
-  },
+  }
 });
 
 module.exports = mongoose.model("Product", productSchema);
