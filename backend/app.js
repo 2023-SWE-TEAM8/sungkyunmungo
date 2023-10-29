@@ -1,6 +1,9 @@
 // const http = require("http");
 // const path = require("path");
 
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
 const port = 8000; //포트번호 설정
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -33,7 +36,28 @@ app.use(cors({
     origin: 'http://localhost:3000',
 }));
 
-
+//swagger
+const options = {
+    definition: {
+      openapi: "3.0.0",
+      info: {
+        title: "성균문고 API",
+        version: "0.1.0",
+      },
+      servers: [
+        {
+          url: "http://localhost:8000/",
+        },
+      ],
+    },
+    apis: ["./routes/*.js", "./models/*.js"],
+  };
+  
+  const specs = swaggerJsdoc(options);
+  app.use("/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(specs)
+  );
 
 //router 목록
 app.use("/admin", adminRoutes); // 라우터 객체 사용 -> /admin으로 시작하는 경우 모두 adminRoutes로 
