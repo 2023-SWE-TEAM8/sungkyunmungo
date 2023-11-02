@@ -5,28 +5,24 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   userName: {
     type: String,
-    required: true,
     unique: true,
   },
   name: {
     type: String,
-    required: true,
   },
   passWord: {
     type: String,
-    required: true,
   },
   phone: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
+    unique: true,
     required: true,
   },
   studentId: {
     type: String,
-    required: true,
   },
   rate: {
     type: Number,
@@ -46,6 +42,9 @@ const userSchema = new Schema({
   date: {
     type: Date,
     default: Date.now,
+  },
+  verification: {
+    type: String,
   },
 });
 
