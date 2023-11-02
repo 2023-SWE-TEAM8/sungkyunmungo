@@ -13,12 +13,19 @@ const cors = require("cors");
 const app = express();
 const config = require("./config/key");
 
+
+    
+
+
 const adminRoutes = require("./routes/admin");
 const boardRoutes = require("./routes/board");
-const errorControllers = require("./controllers/error");
+// const errorControllers = require("./controllers/error");
 
-app.use(bodyParser.urlencoded({extended: false}));
-// app.use(express.static(path.join(__dirname, 'public')));
+//post를 사용할 수 있게
+app.use(
+    express.urlencoded({ extended: true })
+);
+app.use(express.json());
 
 //DB 설정
 mongoose
@@ -63,7 +70,6 @@ const options = {
 app.use("/admin", adminRoutes); // 라우터 객체 사용 -> /admin으로 시작하는 경우 모두 adminRoutes로 
 app.use("/board", boardRoutes);
 
-app.use(errorControllers.get404);
 
 
 app.get("/", (req, res) => res.send("TEAM8"));
