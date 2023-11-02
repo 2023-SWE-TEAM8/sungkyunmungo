@@ -2,14 +2,10 @@ import { useRouter } from 'next/router'
 import Layout from '@/components/layout/layout'
 import LoginForm from '@/components/accounts/loginForm'
 
-const Login = () => {
+const FindIDPW = () => {
   const router = useRouter()
 
-  return (
-    <Layout>
-      <LoginForm></LoginForm>
-    </Layout>
-  )
+  return <Layout></Layout>
 }
 
-export default Login
+export default FindIDPW
