@@ -75,7 +75,12 @@ const signUpForm = () => {
         alert('에러 발생, 잠시 후 다시 시도해주세요.')
       }
     }
-    fn()
+
+    if (username.length > 4) {
+      fn()
+    } else {
+      alert('아이디는 4자 이상입니다.')
+    }
   }
 
   const handleCheckName = () => {
@@ -97,7 +102,11 @@ const signUpForm = () => {
         alert('에러 발생, 잠시 후 다시 시도해주세요.')
       }
     }
-    fn()
+    if (name.length > 4) {
+      fn()
+    } else {
+      alert('닉네임은 4자 이상입니다.')
+    }
   }
 
   const handleCheckCode = () => {
