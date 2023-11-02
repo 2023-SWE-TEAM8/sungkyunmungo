@@ -3,26 +3,26 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  name: {
+  userName: {
     type: String,
-    required: true,
-  },
-  id: {
-    type: String,
-    required: true,
     unique: true,
   },
-  password: {
+  name: {
     type: String,
-    required: true,
+  },
+  passWord: {
+    type: String,
   },
   phone: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
+    unique: true,
     required: true,
+  },
+  studentId: {
+    type: String,
   },
   rate: {
     type: Number,
@@ -42,6 +42,9 @@ const userSchema = new Schema({
   date: {
     type: Date,
     default: Date.now,
+  },
+  code: {
+    type: String,
   },
 });
 
