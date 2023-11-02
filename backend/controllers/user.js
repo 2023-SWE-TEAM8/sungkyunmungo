@@ -99,7 +99,7 @@ const sendEmail = async (email) => {
         display: inline-block;
         padding: 2px 20px;
       "
-    >2
+    >
       <p>안녕하세요! 성균문고 입니다.</p>
       <p>회원 가입 이메일 인증을 위하여 아래 코드를 입력해주세요.</p>
       <p style="font-size: large">인증 번호: <b>${code}</b></p>
