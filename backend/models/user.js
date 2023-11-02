@@ -43,7 +43,7 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  verification: {
+  code: {
     type: String,
   },
 });

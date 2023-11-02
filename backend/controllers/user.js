@@ -17,7 +17,7 @@ exports.postJoin = async (req, res, next) => {
         passWord,
         phone,
         studentId,
-        verification: "O",
+        code: "O",
       }
     );
     console.log(user);
@@ -114,28 +114,36 @@ const sendEmail = async (email) => {
 
 // id 중복 검사
 exports.postUserNameCheck = async (req, res, next) => {
-  const { userName } = req.body;
-  const docs = await User.find({});
-  if (userCheck(docs, "userName", userName)) {
-    res
-      .status(409)
-      .json({ isSuccess: false, message: "이미 사용중인 아이디 입니다." });
-    return;
+  try {
+    const { userName } = req.body;
+    const docs = await User.find({});
+    if (userCheck(docs, "userName", userName)) {
+      res
+        .status(409)
+        .json({ isSuccess: false, message: "이미 사용중인 아이디 입니다." });
+      return;
+    }
+    res.json({ isSuccess: true, message: "사용 가능한 아이디 입니다." });
+  } catch (err) {
+    console.error(err);
   }
-  res.json({ isSuccess: true, message: "사용 가능한 아이디 입니다." });
 };
 
 // 닉네임 중복 검사
 exports.postNameCheck = async (req, res, next) => {
-  const { name } = req.body;
-  const docs = await User.find({});
-  if (userCheck(docs, "name", name)) {
-    res
-      .status(409)
-      .json({ isSuccess: false, message: "이미 사용중인 닉네임 입니다." });
-    return;
+  try {
+    const { name } = req.body;
+    const docs = await User.find({});
+    if (userCheck(docs, "name", name)) {
+      res
+        .status(409)
+        .json({ isSuccess: false, message: "이미 사용중인 닉네임 입니다." });
+      return;
+    }
+    res.json({ isSuccess: true, message: "사용 가능한 닉네임 입니다." });
+  } catch (err) {
+    console.error(err);
   }
-  res.json({ isSuccess: true, message: "사용 가능한 닉네임 입니다." });
 };
 
 // 이메일 중복 검사
