@@ -160,7 +160,7 @@ const signUpForm = () => {
           data,
         )
         alert('회원가입 성공!')
-        router.push('/')
+        router.push('/accounts/login')
       } catch (error) {
         alert('에러 발생, 잠시 후 다시 시도해주세요.')
         alert(error)
