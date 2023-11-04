@@ -19,11 +19,15 @@ const signUpForm = () => {
 
   const [name, setName] = useState('')
   const [checkName, setCheckName] = useState(false)
+  const [studentId, setStudentId] = useState('')
+  const [phone, setPhone] = useState('')
 
   const generalEmailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
   const skkuEmailRegex = /^[A-Za-z0-9._%+-]+@(skku\.edu|g\.skku\.edu)$/
 
   const handleSendEmailVerificationCode = () => {
+    // Todo: 일단은 모든 메일에 대해 인증코드를 발송할 수 있는 상태임.
+
     // if (!generalEmailRegex.test(email)) {
     //   alert('이메일 형식을 지켜주세요')
     // } else if (!skkuEmailRegex.test(email)) {
@@ -147,6 +151,10 @@ const signUpForm = () => {
       setMajor(value)
     } else if (name === 'code') {
       setCode(value)
+    } else if (name === 'studentId') {
+      setStudentId(value)
+    } else if (name === 'phone') {
+      setPhone(value)
     }
   }
 
@@ -156,9 +164,9 @@ const signUpForm = () => {
         userName: username,
         name,
         passWord: password,
-        phone: '010-1234-1234',
+        phone,
         email,
-        studentId: '2020310111',
+        studentId,
         major,
         campus,
       }
@@ -225,6 +233,19 @@ const signUpForm = () => {
         onChange={handleChange}
         type="text"
         name="username"
+      />
+      <F.InputWithLabel
+        label="학번 입력"
+        onClick={handleCheckUsername}
+        onChange={handleChange}
+        name="studentId"
+      />
+      <F.InputWithLabel
+        label="전화번호 입력"
+        onClick={handleCheckUsername}
+        onChange={handleChange}
+        type="text"
+        name="phone"
       />
       <F.InputWithLabel
         label="비밀번호 입력"
