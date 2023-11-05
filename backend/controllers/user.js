@@ -135,6 +135,9 @@ exports.postCode = async (req, res, next) => {
         .json({ isSuccess: false, message: "인증 번호가 다릅니다." });
   } catch (err) {
     console.error(err);
+    res
+      .status(500)
+      .json({ isSuccess: false, message: "서버 에러 다시 시도하세요." });
   }
 };
 
