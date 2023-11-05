@@ -28,10 +28,11 @@ exports.postLogin = async (req, res, next) => {
           issuer: "Sungkyunmungo",
         }
       );
-      res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+      // res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
       res.status(200).json({
         message: "로그인에 성공하였습니다.",
         isSuccess: true,
+        token,
       });
 
       return;
@@ -65,7 +66,7 @@ exports.postLogin = async (req, res, next) => {
 exports.postLogout = async (req, res, next) => {
   try {
     // cookie 지우기
-    res.clearCookie("token", req.cookies.token);
+    // res.clearCookie("token", req.cookies.token);
     res.json({
       isSuccess: true,
       message: "로그아웃에 성공하였습니다.",
