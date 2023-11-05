@@ -236,13 +236,11 @@ const signUpForm = () => {
       />
       <F.InputWithLabel
         label="학번 입력"
-        onClick={handleCheckUsername}
         onChange={handleChange}
         name="studentId"
       />
       <F.InputWithLabel
         label="전화번호 입력"
-        onClick={handleCheckUsername}
         onChange={handleChange}
         type="text"
         name="phone"
