@@ -2,6 +2,81 @@ const User = require("../models/user");
 const UserInfo = require("../models/userInfo");
 const config = require("../config/key.js");
 const { createTransport } = require("nodemailer");
+const jwt = require("jsonwebtoken");
+
+exports.postLogin = async (req, res, next) => {
+  try {
+    const { userName, passWord } = req.body;
+
+    const user = await User.findOne({ userName });
+
+    //  정상적인 로그인
+    if (user.passWord === passWord) {
+      const key = config.JWT;
+      // 받은 요청에서 db의 데이터를 가져온다 (로그인정보)
+      const { name, studentId } = user;
+      const token = jwt.sign(
+        {
+          type: "JWT",
+          userName,
+          name,
+          studentId,
+        },
+        key,
+        {
+          expiresIn: "60m",
+          issuer: "Sungkyunmungo",
+        }
+      );
+      res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+      res.status(200).json({
+        message: "로그인에 성공하였습니다.",
+        isSuccess: true,
+      });
+
+      return;
+    }
+
+    // 존재하지 않는 아이디
+    if (!user) {
+      res.status(401).json({
+        isSuccess: false,
+        message: "가입되지 않은 사용자입니다.",
+      });
+      return;
+    }
+    // 패스워드와 아이디가 다른 경우
+    else if (user.passWord !== passWord) {
+      res.status(403).json({
+        isSuccess: false,
+        message: "아이디 또는 패스워드가 잘못 되었습니다.",
+      });
+      return;
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      isSuccess: false,
+      message: "서버에서 오류가 발생하였습니다. 나중에 다시 시도하세요.",
+    });
+  }
+};
+
+exports.postLogout = async (req, res, next) => {
+  try {
+    // cookie 지우기
+    res.clearCookie("token", req.cookies.token);
+    res.json({
+      isSuccess: true,
+      message: "로그아웃에 성공하였습니다.",
+    });
+  } catch (err) {
+    res.status(500).json({
+      isSuccess: false,
+      message: "서버에서 오류가 발생하였습니다. 나중에 다시 시도하세요.",
+    });
+  }
+};
 
 // 회원가입 요청
 exports.postJoin = async (req, res, next) => {
@@ -126,6 +201,7 @@ exports.postUserNameCheck = async (req, res, next) => {
     res.json({ isSuccess: true, message: "사용 가능한 아이디 입니다." });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ isSuccess: false, message: "서버 오류 발생" });
   }
 };
 
@@ -143,6 +219,7 @@ exports.postNameCheck = async (req, res, next) => {
     res.json({ isSuccess: true, message: "사용 가능한 닉네임 입니다." });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ isSuccess: false, message: "서버 오류 발생" });
   }
 };
 

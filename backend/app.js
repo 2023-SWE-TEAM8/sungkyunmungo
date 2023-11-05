@@ -8,6 +8,7 @@ const port = 8000; //포트번호 설정
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
 
 const cors = require("cors");
 const app = express();
@@ -21,6 +22,7 @@ const userRoutes = require("./routes/user");
 
 //post를 사용할 수 있게
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.json());
 
 //DB 설정
