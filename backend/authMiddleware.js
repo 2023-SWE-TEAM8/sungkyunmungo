@@ -3,7 +3,7 @@ const config = require("./config/key.js");
 
 exports.auth = (req, res, next) => {
   try {
-    req.decoded = jwt.verify(req.body.token, config.JWT);
+    req.decoded = jwt.verify(req.cookies.token, config.JWT);
     return next();
   } catch (error) {
     // 인증 실패
