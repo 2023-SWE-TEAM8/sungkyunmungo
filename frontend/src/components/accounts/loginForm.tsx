@@ -1,9 +1,11 @@
 // Todo: AppLayout 수정 필요
 import { useEffect, useState } from 'react'
+import Axios from 'axios'
 import { useRouter } from 'next/navigation'
 import * as S from './loginForm.styled'
 
 const loginForm = () => {
+  // const { dispatch } = useAppContext()
   const router = useRouter()
   const [id, setId] = useState('')
   const [password, setPassword] = useState('')
@@ -19,18 +21,25 @@ const loginForm = () => {
 
   const handleLogin = (e) => {
     // Todo: 로그인 API 통신
-    function callAPIForLogin() {
-      if (true) {
-        alert(`ID is ${id} PW is ${password}`)
-        // router.push('/')
-      } else {
-        alert('Failed to login!')
-      }
-      setId('')
-      setPassword('')
-    }
+    async function fn() {
+      const data = { userName: id, passWord: password }
+      try {
+        alert('잠시만 기다려주세요!')
+        const response = await Axios.post(
+          'http://localhost:8000/user/login/',
+          data,
+        )
+        const {
+          data: { token },
+        } = response
 
-    callAPIForLogin()
+        localStorage.setItem('jwtToken', token)
+        router.push('/')
+      } catch (error) {
+        alert('에러 발생, 잠시 후 다시 시도해주세요.')
+      }
+    }
+    fn()
   }
 
   return (
@@ -39,13 +48,11 @@ const loginForm = () => {
         label="ID"
         name="id"
         onChange={handleChange}
-        value={id}
       ></S.InputWithLabel>
       <S.InputWithLabel
         label="PASSWORD"
         type="password"
         name="password"
-        value={password}
         onChange={handleChange}
       ></S.InputWithLabel>
       <S.RightAlignedLink onClick={() => router.push('/accounts/find')}>
