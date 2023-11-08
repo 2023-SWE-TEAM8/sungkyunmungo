@@ -252,3 +252,57 @@ const userCheck = (docs, field, val) => {
   });
   return bool;
 };
+
+//user 전체 조회
+exports.findAllUser = async (req, res, next) => {
+  try {
+
+    var users = await User.find();
+
+    res.status(200).json({
+      isSuccess: true,
+      data: users
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+//user 평점 주기
+exports.rateUser = async (req, res, next) => {
+  try {
+    const { userId, rate } = req.body;
+    var user = await User.findById(userId);
+
+    // 평점을 받는 유저는 존재해야 한다.
+    if (!user) {
+      return res.status(404).json({ success: false, message: "해당 유저가 존재하지 않습니다." });
+    }
+
+    // 평점은 1~5점 이어야 한다.
+    if (rate < 1 || rate > 5) {
+      return res.status(500).json({ success: false, message: "평점은 1~5점 사이어야 합니다." });
+    }
+
+    const filter = { _id: userId };
+    const update = { $set: { rate: user.rate + rate, numEvaluators: user.numEvaluators + 1 } };
+
+    const doc = await User.findOneAndUpdate(filter, update, {
+      new: true
+    });
+
+    res.status(200).json({
+      isSuccess: true,
+      message: "평점 주기가 완료되었습니다.",
+      updatedRate: doc.rate,
+      updatedNumEvaluators: doc.numEvaluators,
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+
+}

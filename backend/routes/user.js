@@ -266,4 +266,10 @@ router.post("/logout", auth, usersController.postLogout);
  *                  type: string
  */
 
+
+//user 전체 조회(확인용)
+router.get("/usersall", usersController.findAllUser);
+// user 평점 매기기
+router.put("/rating", usersController.rateUser);
+
 module.exports = router;
