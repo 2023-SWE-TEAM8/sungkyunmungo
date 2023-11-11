@@ -1,6 +1,6 @@
 // Todo: AppLayout 수정 필요
 import { useRef, useState } from 'react'
-import * as F from './profile.styled.'
+import * as F from './profile.styled'
 
 const myProfile = () => {
   const [images, setImages] = useState('/logo.png')
