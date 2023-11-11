@@ -161,9 +161,9 @@ const RoundedImageBox = styled.div`
 `
 
 export const Image = styled.img`
-  width: 300px;
-  height: 300px;
-  border-radius: 150px;
+  width: 200px;
+  height: 200px;
+  border-radius: 100px;
   border: 1px solid;
 `
 
@@ -173,8 +173,19 @@ export const ImageObject = ({ src }) => (
   </ImageBox>
 )
 
-export const RoundedImageObject = ({ src, onClick }) => (
+export const RoundedImageObject = ({
+  src,
+  onClick,
+  inputFile,
+  handleFileUpload,
+}) => (
   <RoundedImageBox onClick={onClick}>
+    <input
+      style={{ display: 'none' }}
+      ref={inputFile}
+      onChange={handleFileUpload}
+      type="file"
+    />
     <Image src={src}></Image>
   </RoundedImageBox>
 )
