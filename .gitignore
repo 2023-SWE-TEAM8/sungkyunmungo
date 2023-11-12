@@ -3,3 +3,5 @@ package-lock.json
 dev.js
 apiTest.http
 .env
+yarn.lock
+.DS_Store
