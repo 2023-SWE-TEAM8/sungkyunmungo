@@ -1,15 +1,15 @@
 import { useRouter } from 'next/router'
 import Layout from '@/components/layout/layout'
-import LoginForm from '@/components/accounts/loginForm'
+import PostNewForm from '@/components/posts/postNewForm'
 
-const Login = () => {
+const PostNew = () => {
   const router = useRouter()
 
   return (
     <Layout>
-      <LoginForm></LoginForm>
+      <PostNewForm />
     </Layout>
   )
 }
 
-export default Login
+export default PostNew

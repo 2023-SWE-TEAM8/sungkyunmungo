@@ -1,15 +1,15 @@
 import { useRouter } from 'next/router'
 import Layout from '@/components/layout/layout'
-import LoginForm from '@/components/accounts/loginForm'
+import MyProfile from '@/components/accounts/profile'
 
-const Login = () => {
+const Profile = () => {
   const router = useRouter()
 
   return (
     <Layout>
-      <LoginForm></LoginForm>
+      <MyProfile></MyProfile>
     </Layout>
   )
 }
 
-export default Login
+export default Profile
