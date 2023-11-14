@@ -137,7 +137,6 @@ exports.postLogin = async (req, res, next) => {
         },
         key,
         {
-          expiresIn: "60m",
           issuer: "Sungkyunmungo",
         }
       );
