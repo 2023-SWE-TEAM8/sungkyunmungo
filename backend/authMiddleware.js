@@ -3,7 +3,16 @@ const config = require("./config/key.js");
 
 exports.auth = (req, res, next) => {
   try {
-    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res
+        .status(401)
+        .json({ error: "Unauthorized: Missing Authorization header" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    req.decoded = jwt.verify(token, config.JWT);
     return next();
   } catch (error) {
     // 인증 실패

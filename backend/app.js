@@ -22,7 +22,6 @@ const userRoutes = require("./routes/user");
 
 //post를 사용할 수 있게
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(express.json());
 
 //DB 설정
@@ -39,8 +38,11 @@ mongoose
 app.use(
   cors({
     origin: "http://localhost:3000",
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+app.use(cookieParser());
 
 //swagger
 const options = {
