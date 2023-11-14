@@ -267,13 +267,13 @@ router.post("/logout", auth, usersController.postLogout);
  *                message:
  *                  type: string
  */
-router.get("/profile", auth, usersController.getProfile);
+router.get("/profile", auth, usersController.getMyProfile);
 /**
  * @swagger
  * /user/profile:
  *   get:
- *    summary: "유저 정보 요청"
- *    description: "유저 정보 요청"
+ *    summary: "내 정보 요청"
+ *    description: "내 정보 요청"
  *    tags: [Users]
  *    requestBody:
  *      description:
@@ -304,6 +304,54 @@ router.get("/profile", auth, usersController.getProfile);
  *                    email:
  *                      type: string
  *                    phone:
+ *                      type: string
+ *                    keyWord:
+ *                      type: array
+ *                      items:
+ *                        type: string
+ *                    totalTrade:
+ *                      type: integer
+ *                    rate:
+ *                      type: integer
+ *                    numEvaluators:
+ *                      type: integer
+ *                    major:
+ *                       type: string
+ *                    campus:
+ *                      type: string
+ *
+ */
+router.post("/profile", auth, usersController.postOtherProfile);
+/**
+ * @swagger
+ * /user/profile:
+ *   post:
+ *    summary: "탸 유저 정보 요청"
+ *    description: "타 유저 정보 요청"
+ *    tags: [Users]
+ *    requestBody:
+ *      description:
+ *      required: true
+ *
+ *    responses:
+ *      "200":
+ *        description: 프로필 정보 가져오기에 성공하였습니다.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              additionalProperties:
+ *                type: array
+ *              properties:
+ *                isSuccess:
+ *                  type: boolean
+ *                message:
+ *                  type: string
+ *                token:
+ *                  type: string
+ *                info:
+ *                  properties:
+ *                    userName:
  *                      type: string
  *                    keyWord:
  *                      type: array

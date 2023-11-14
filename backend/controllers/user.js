@@ -4,9 +4,53 @@ const config = require("../config/key.js");
 const { createTransport } = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
-exports.getProfile = async (req, res, next) => {
+exports.postOtherProfile = async (req, res, next) => {
+  const { token } = req.cookies;
   try {
-    const { token } = req.cookies;
+    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    const { userName } = req.body;
+
+    const user = await User.findOne({ userName });
+    if (!user) {
+      res.status(404).json({
+        isSuccess: false,
+        message: "유저 정보가 없습니다.",
+        token,
+      });
+
+      return;
+    }
+    const userInfo = await UserInfo.findOne({ user: user._id });
+
+    const info = {
+      userName: user.userName,
+      keyWord: user.keyWord,
+      totalTrade: user.totalTrade,
+      rate: user.rate,
+      numEvaluators: user.numEvaluators,
+      major: userInfo.major,
+      campus: userInfo.campus,
+    };
+
+    res.json({
+      info,
+      isSuccess: true,
+      message: "프로필 정보 가져오기에 성공하였습니다.",
+      token,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      isSuccess: false,
+      message: "서버 오류 발생",
+      token,
+    });
+  }
+};
+
+exports.getMyProfile = async (req, res, next) => {
+  const { token } = req.cookies;
+  try {
     req.decoded = jwt.verify(req.cookies.token, config.JWT);
     const { userName } = req.decoded;
     const user = await User.findOne({ userName });
