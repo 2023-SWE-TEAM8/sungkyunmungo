@@ -4,6 +4,119 @@ const config = require("../config/key.js");
 const { createTransport } = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
+exports.postOtherProfile = async (req, res, next) => {
+  const { token } = req.cookies;
+  try {
+    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    const { userName } = req.body;
+
+    const user = await User.findOne({ userName });
+    if (!user) {
+      res.status(404).json({
+        isSuccess: false,
+        message: "유저 정보가 없습니다.",
+        token,
+      });
+
+      return;
+    }
+    const userInfo = await UserInfo.findOne({ user: user._id });
+
+    const info = {
+      userName: user.userName,
+      keyWord: user.keyWord,
+      totalTrade: user.totalTrade,
+      rate: user.rate,
+      numEvaluators: user.numEvaluators,
+      major: userInfo.major,
+      campus: userInfo.campus,
+    };
+
+    res.json({
+      info,
+      isSuccess: true,
+      message: "프로필 정보 가져오기에 성공하였습니다.",
+      token,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      isSuccess: false,
+      message: "서버 오류 발생",
+      token,
+    });
+  }
+};
+
+exports.getMyProfile = async (req, res, next) => {
+  const { token } = req.cookies;
+  try {
+    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    const { userName } = req.decoded;
+    const user = await User.findOne({ userName });
+    const userInfo = await UserInfo.findOne({ user: user._id });
+
+    const info = {
+      userName: user.userName,
+      name: user.name,
+      studentId: user.studentId,
+      email: user.email,
+      phone: user.phone,
+      keyWord: user.keyWord,
+      totalTrade: user.totalTrade,
+      rate: user.rate,
+      numEvaluators: user.numEvaluators,
+      major: userInfo.major,
+      campus: userInfo.campus,
+    };
+
+    res.json({
+      info,
+      isSuccess: true,
+      message: "프로필 정보 가져오기에 성공하였습니다.",
+      token,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      isSuccess: false,
+      message: "서버 오류 발생",
+      token,
+    });
+  }
+};
+
+exports.patchProfile = async (req, res, next) => {
+  try {
+    const { token } = req.cookies;
+    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    const { userName } = req.decoded;
+    const { passWord, studentId, name, major, campus } = req.body;
+
+    const user = await User.findOneAndUpdate(
+      { userName },
+      { passWord, studentId, name }
+    );
+    const userInfo = await UserInfo.updateOne(
+      { user: user._id },
+      { major, campus }
+    );
+
+    res.json({
+      isSuccess: true,
+      message: "회원정보 변경에 성공하였습니다.",
+      token,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      isSuccess: false,
+      message: "서버 오류 발생",
+      token,
+    });
+  }
+};
+
 exports.postLogin = async (req, res, next) => {
   try {
     const { userName, passWord } = req.body;
@@ -66,7 +179,7 @@ exports.postLogin = async (req, res, next) => {
 exports.postLogout = async (req, res, next) => {
   try {
     // cookie 지우기
-    // res.clearCookie("token", req.cookies.token);
+    res.clearCookie("token", req.cookies.token);
     res.json({
       isSuccess: true,
       message: "로그아웃에 성공하였습니다.",
@@ -96,11 +209,8 @@ exports.postJoin = async (req, res, next) => {
         code: "O",
       }
     );
-    console.log(user);
 
     const userInfo = await UserInfo.create({ user: user._id, major, campus });
-    //
-    console.log(userInfo);
 
     res.status(200).json({
       isSuccess: true,

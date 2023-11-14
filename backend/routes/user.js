@@ -231,6 +231,8 @@ router.post("/login", usersController.postLogin);
  *                  type: boolean
  *                message:
  *                  type: string
+ *                token:
+ *                  type: string
  */
 router.post("/logout", auth, usersController.postLogout);
 /**
@@ -263,6 +265,150 @@ router.post("/logout", auth, usersController.postLogout);
  *                isSuccess:
  *                  type: boolean
  *                message:
+ *                  type: string
+ */
+router.get("/profile", auth, usersController.getMyProfile);
+/**
+ * @swagger
+ * /user/profile:
+ *   get:
+ *    summary: "내 정보 요청"
+ *    description: "내 정보 요청"
+ *    tags: [Users]
+ *    requestBody:
+ *      description:
+ *      required: true
+ *
+ *    responses:
+ *      "200":
+ *        description: 프로필 정보 가져오기에 성공하였습니다.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              additionalProperties:
+ *                type: array
+ *              properties:
+ *                isSuccess:
+ *                  type: boolean
+ *                message:
+ *                  type: string
+ *                token:
+ *                  type: string
+ *                info:
+ *                  properties:
+ *                    name:
+ *                      type: string
+ *                    studentId:
+ *                      type: string
+ *                    email:
+ *                      type: string
+ *                    phone:
+ *                      type: string
+ *                    keyWord:
+ *                      type: array
+ *                      items:
+ *                        type: string
+ *                    totalTrade:
+ *                      type: integer
+ *                    rate:
+ *                      type: integer
+ *                    numEvaluators:
+ *                      type: integer
+ *                    major:
+ *                       type: string
+ *                    campus:
+ *                      type: string
+ *
+ */
+router.post("/profile", auth, usersController.postOtherProfile);
+/**
+ * @swagger
+ * /user/profile:
+ *   post:
+ *    summary: "탸 유저 정보 요청"
+ *    description: "타 유저 정보 요청"
+ *    tags: [Users]
+ *    requestBody:
+ *      description:
+ *      required: true
+ *
+ *    responses:
+ *      "200":
+ *        description: 프로필 정보 가져오기에 성공하였습니다.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              additionalProperties:
+ *                type: array
+ *              properties:
+ *                isSuccess:
+ *                  type: boolean
+ *                message:
+ *                  type: string
+ *                token:
+ *                  type: string
+ *                info:
+ *                  properties:
+ *                    userName:
+ *                      type: string
+ *                    keyWord:
+ *                      type: array
+ *                      items:
+ *                        type: string
+ *                    totalTrade:
+ *                      type: integer
+ *                    rate:
+ *                      type: integer
+ *                    numEvaluators:
+ *                      type: integer
+ *                    major:
+ *                       type: string
+ *                    campus:
+ *                      type: string
+ *
+ */
+router.patch("/profile", auth, usersController.patchProfile);
+/**
+ * @swagger
+ * /user/profile:
+ *   patch:
+ *    summary: "유저 정보 변경"
+ *    description: "유저 정보 변경"
+ *    tags: [Users]
+ *    requestBody:
+ *      description: 유저의 변경된 정보
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              name:
+ *                type: string
+ *              passWord:
+ *                type: string
+ *              studentId:
+ *                type: string
+ *              major:
+ *                type: string
+ *              campus:
+ *                type: string
+ *
+ *    responses:
+ *      "200":
+ *        description: 회원정보 변경에 성공하였습니다.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                isSuccess:
+ *                  type: boolean
+ *                message:
+ *                  type: string
+ *                token:
  *                  type: string
  */
 
