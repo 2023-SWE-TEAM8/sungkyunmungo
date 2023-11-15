@@ -123,5 +123,6 @@ router.post("/posts/write", productsController.postBoard)
  *                data:
  *                  type: object
  */
+router.get("/posts/search", productsController.searchProduct) //검색하는 함수
 
 module.exports = router;

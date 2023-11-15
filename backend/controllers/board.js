@@ -91,3 +91,28 @@ exports.postBoard = async (req, res, next) => {
     }
 };
 
+
+exports.searchProduct = async (req, res, next) => {
+    try {
+        const searchTerm = req.query.searchTerm; // 검색어는 쿼리 파라미터로 
+
+        // 정규표현식을 사용하여 검색어에 대한 패턴을 생성
+        const regex = new RegExp(searchTerm, 'i'); // 'i' -> 대소문자를 구분하지 않도록
+
+        // 몽고DB에서 데이터를 찾을 때 제품 이름에 대한 검색을 수행
+        const foundProducts = await Product.find({ title: regex });
+
+        if (foundProducts.length === 0) {
+            return res.status(404).json({ message: '검색 결과가 없습니다.' });
+        }
+
+        res.status(200).json(foundProducts);
+
+    } 
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: '서버에서 오류가 발생했습니다. 나중에 다시 시도하세요' });
+    }
+};
+
+
