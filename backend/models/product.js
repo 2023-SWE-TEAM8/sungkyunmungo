@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const {
-  Types: { ObjectId },
-} = Schema;
+// const {
+//   Types: { ObjectId },
+// } = Schema;
 
 const productSchema = Schema({
   writer: {
-    type: ObjectId,
+    type: String,
     required: true,
     ref: "User",
   },

@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const User = require("../models/user");
 
 // board의 모든 물건 보여주기
 exports.postBoardAll = (req, res, next) => {
@@ -78,6 +79,17 @@ exports.postBoard = async (req, res, next) => {
             condition: req.body.condition, // Fixed typo here
             status: req.body.status
         });
+        // 조건을 통해서 DB에 있는지 확인한다.
+        const existingUser = await User.findOne({ userName: newProduct.writer });
+        if (!existingUser) {
+            // 작성자가 존재하지 않으면 에러 응답을 보냅니다.
+            return res.status(400).json({
+                code: 400,
+                isSuccess: false,
+                message: "작성자가 존재하지 않습니다. 올바른 사용자를 입력하세요."
+            });
+        }
+
         res.status(200).json({
             "code": 200,
             "isSuccess": true,
