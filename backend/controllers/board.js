@@ -32,12 +32,16 @@ exports.postBoardPage = async (req, res, next) => {
         var page = Math.max(1, parseInt(req.query.page)) || 1;
         var limit = Math.max(1, parseInt(req.query.limit)) || 10;
         var major = req.query.major || 'all'; // Get the major query parameter or default to 'all'
+        var condition = req.query.condition || 'all';
 
         var skip = (page - 1) * limit;
         var query = {};
 
         if (major !== 'all') {
             query.major = major; // If a specific major is provided, filter by it
+        }
+        if (condition !== 'all') {
+            query.condition = condition;
         }
 
         var count = await Product.countDocuments(query);
