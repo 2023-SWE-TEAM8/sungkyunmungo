@@ -34,12 +34,11 @@ const productSchema = Schema({
   },
   campus: {
     type: String,
-    enum: ["suwon", "hyehwa"],
+    enum: ["NSC", "HSSC"],
     required: true,
   },
   major: {
     type: String,
-    enum: ["software", "statistics"],
     required: true,
   },
   status: {
