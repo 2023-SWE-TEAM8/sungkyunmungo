@@ -17,12 +17,12 @@ exports.postBoardAll = (req, res, next) => {
             return res.send({ success: false, err });
             //에러가 발생 안할 경우에
         }
-        else{
+        else {
             data = article_api; //api 데이터를 data 변수에 담는다.
             res.status(200).json({
-            // 에러가 발생 안했으므로. json으로 던져준다.
-            success: true,
-            data: data,
+                // 에러가 발생 안했으므로. json으로 던져준다.
+                success: true,
+                data: data,
             });
         }
     });
@@ -96,7 +96,7 @@ exports.postBoard = async (req, res, next) => {
             "message": "게시글 작성에 성공하였습니다.",
             "data": newProduct // Optional: Return the created product
         });
-    } 
+    }
     catch (err) {
         console.error(err); // Log the error for debugging purposes
         res.status(500).json({
@@ -124,11 +124,24 @@ exports.searchProduct = async (req, res, next) => {
 
         res.status(200).json(foundProducts);
 
-    } 
+    }
     catch (error) {
         console.error(error);
         res.status(500).json({ message: '서버에서 오류가 발생했습니다. 나중에 다시 시도하세요' });
     }
 };
+
+//메인페이지 전공 드롭다운용 함수
+exports.getAllMajor = async (req, res, next) => {
+    try {
+        const existMajors = await Product.distinct('major');
+
+        res.status(200).json(existMajors);
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: '서버에서 오류가 발생했습니다. 나중에 다시 시도하세요' });
+    }
+}
 
 
