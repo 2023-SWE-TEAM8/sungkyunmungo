@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const {
-  Types: { ObjectId },
-} = Schema;
+// const {
+//   Types: { ObjectId },
+// } = Schema;
 
 const productSchema = Schema({
   writer: {
-    type: ObjectId,
+    type: String,
     required: true,
     ref: "User",
   },
@@ -34,12 +34,11 @@ const productSchema = Schema({
   },
   campus: {
     type: String,
-    enum: ["suwon", "hyehwa"],
+    enum: ["NSC", "HSSC"],
     required: true,
   },
   major: {
     type: String,
-    enum: ["software", "statistics"],
     required: true,
   },
   status: {
