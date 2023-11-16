@@ -18,6 +18,7 @@ export const FilterBox = styled.form`
   width: 65%;
   background-color: #67bde8;
   padding: 10px;
+  border-radius: 5px;
 `
 
 export const SearchBox = styled.div`
@@ -79,7 +80,7 @@ export const SelectFilter = styled.select`
 
 export const Others = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 10%;
   max-width: 100px;
 `
@@ -87,4 +88,29 @@ export const Others = styled.div`
 export const IconImg = styled.img`
   width: 40%;
   cursor: pointer;
+`
+
+export const PostBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 20px;
+
+  margin-top: 10px;
+  margin-bottom: 10px;
+`
+
+export const PostTile = styled.p`
+  font-size: 1rem;
+  color: gray;
+  margin-right: 20px;
+`
+
+export const PostButton = styled.button`
+  border-radius: 20px;
+  border: none;
+  background-color: #b8b8ff;
+  cursor: pointer;
+  padding: 15px;
+  font-weight: bold;
 `
