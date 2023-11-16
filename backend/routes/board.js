@@ -123,6 +123,12 @@ router.post("/posts/write", productsController.postBoard)
  *                data:
  *                  type: object
  */
+
+http://localhost:8000/board/posts/search?searchTerm=
 router.get("/posts/search", productsController.searchProduct) //검색하는 함수
+
+http://localhost:8000/board/posts/byId?id=65562c93e2cd7b7d551540e7
+router.get("/posts/byId", productsController.getProductById) // id를 기준으로 찾아오기
+
 
 module.exports = router;

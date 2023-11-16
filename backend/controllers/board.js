@@ -3,12 +3,6 @@ const User = require("../models/user");
 
 // board의 모든 물건 보여주기
 exports.postBoardAll = (req, res, next) => {
-    // res.render("/postall",{
-    //     pageTitle: "Post Product All",
-    //     path: "/board/postall",
-    //     formsCSS: true,
-    //     productCSS: true,
-    //     activeAddProduct: true
 
     Product.find((error, article_api) => {
         //에러가 발생할 경우
@@ -134,6 +128,40 @@ exports.searchProduct = async (req, res, next) => {
         res.status(500).json({ message: '서버에서 오류가 발생했습니다. 나중에 다시 시도하세요' });
     }
 };
+
+// 2번째 페이지
+//post_id를 가지고 재요청
+
+exports.getProductById = async (req, res, next) => {
+    try {
+        var productId = req.query.id; // 변수명 수정
+
+        // _id를 이용하여 제품 확인
+        const existingProduct = await Product.findOne({ _id: productId });
+
+        if (existingProduct) {
+            // 제품이 존재하는 경우
+            res.status(200).json({
+                success: true,
+                data: existingProduct
+            });
+        } else {
+            // 제품이 존재하지 않는 경우
+            res.status(404).json({
+                success: false,
+                message: "제품을 찾을 수 없습니다."
+            });
+        }
+    } catch (error) {
+        // 에러 처리
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "서버 에러"
+        });
+    }
+};
+
 
 
 
