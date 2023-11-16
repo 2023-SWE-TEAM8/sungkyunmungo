@@ -110,7 +110,7 @@ exports.postBoard = async (req, res, next) => {
 
 exports.searchProduct = async (req, res, next) => {
     try {
-        const searchTerm = req.query.searchTerm; // 검색어는 쿼리 파라미터로 
+        let searchTerm = req.query.searchTerm || ''; // 검색어는 쿼리 파라미터로 => "" 또한 받을 수 있ㅇ므
 
         // 정규표현식을 사용하여 검색어에 대한 패턴을 생성
         const regex = new RegExp(searchTerm, 'i'); // 'i' -> 대소문자를 구분하지 않도록
@@ -130,5 +130,6 @@ exports.searchProduct = async (req, res, next) => {
         res.status(500).json({ message: '서버에서 오류가 발생했습니다. 나중에 다시 시도하세요' });
     }
 };
+
 
 
