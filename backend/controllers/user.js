@@ -59,6 +59,16 @@ exports.getMyProfile = async (req, res, next) => {
     req.decoded = jwt.verify(token, config.JWT);
     const { userName } = req.decoded;
     const user = await User.findOne({ userName });
+    if (!user) {
+      res.status(404).json({
+        isSuccess: false,
+        message: "유저 정보가 없습니다.",
+        token,
+      });
+
+      return;
+    }
+
     const userInfo = await UserInfo.findOne({ user: user._id });
 
     const info = {
@@ -102,6 +112,15 @@ exports.patchProfile = async (req, res, next) => {
     const { major, campus, photo, phone, description } = req.body;
 
     const user = await User.findOneAndUpdate({ userName }, { phone });
+    if (!user) {
+      res.status(404).json({
+        isSuccess: false,
+        message: "유저 정보가 없습니다.",
+        token,
+      });
+
+      return;
+    }
     const userInfo = await UserInfo.updateOne(
       { user: user._id },
       { major, campus, photo, description }
@@ -128,6 +147,24 @@ exports.postLogin = async (req, res, next) => {
 
     const user = await User.findOne({ userName });
 
+    // 존재하지 않는 아이디
+    if (!user) {
+      res.status(401).json({
+        isSuccess: false,
+        message: "가입되지 않은 사용자입니다.",
+      });
+      return;
+    }
+
+    // 패스워드와 아이디가 다른 경우
+    if (user.passWord !== passWord) {
+      res.status(403).json({
+        isSuccess: false,
+        message: "아이디 또는 패스워드가 잘못 되었습니다.",
+      });
+      return;
+    }
+
     //  정상적인 로그인
     if (user.passWord === passWord) {
       const key = config.JWT;
@@ -151,23 +188,6 @@ exports.postLogin = async (req, res, next) => {
         message: "로그인에 성공하였습니다.",
         isSuccess: true,
         token,
-      });
-      return;
-    }
-
-    // 존재하지 않는 아이디
-    if (!user) {
-      res.status(401).json({
-        isSuccess: false,
-        message: "가입되지 않은 사용자입니다.",
-      });
-      return;
-    }
-    // 패스워드와 아이디가 다른 경우
-    else if (user.passWord !== passWord) {
-      res.status(403).json({
-        isSuccess: false,
-        message: "아이디 또는 패스워드가 잘못 되었습니다.",
       });
       return;
     }
