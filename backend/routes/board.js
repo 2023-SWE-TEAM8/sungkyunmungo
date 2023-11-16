@@ -124,7 +124,7 @@ router.post("/posts/write", productsController.postBoard)
  *                  type: object
  */
 
-http://localhost:8000/board/posts/search?searchTerm=
+http://localhost:8000/board/posts/search?searchTerm=Architecture&campus=NSC&status=판매중&page=1&limit=10&condition=중&major=software
 router.get("/posts/search", productsController.searchProduct) //검색하는 함수
 
 http://localhost:8000/board/posts/byId?id=65562c93e2cd7b7d551540e7
