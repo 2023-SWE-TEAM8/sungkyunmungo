@@ -23,6 +23,7 @@ const loginForm = () => {
     // Todo: 로그인 API 통신
     async function fn() {
       const data = { userName: id, passWord: password }
+      alert(JSON.stringify(data))
       try {
         alert('잠시만 기다려주세요!')
         const response = await Axios.post(
@@ -34,6 +35,7 @@ const loginForm = () => {
         } = response
 
         localStorage.setItem('jwtToken', token)
+        localStorage.setItem('userID', id)
         router.push('/')
       } catch (error) {
         alert('에러 발생, 잠시 후 다시 시도해주세요.')
