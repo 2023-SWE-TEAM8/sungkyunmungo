@@ -14,6 +14,18 @@ const GlobalStyle = styled.createGlobalStyle`
     font-family: 'Jua';
   }
 
+  .react-responsive-3d-carousel__carousel__item {
+    border-radius: 15px !important;
+  }
+
+  .react-responsive-3d-carousel__carousel__list {
+    margin-bottom: 20px !important;
+  }
+
+  .react-responsive-3d-carousel__status {
+    display: none;
+  }
+
   @media only screen and (max-width: 768px) {
     body {
     }
