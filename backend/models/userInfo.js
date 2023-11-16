@@ -18,6 +18,12 @@ const userInfoSchema = new Schema({
     type: String,
     enum: ["자연과학캠퍼스", "인문사회과학캠퍼스"],
   },
+  description: {
+    type: String,
+  },
+  photo: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("UserInfo", userInfoSchema);

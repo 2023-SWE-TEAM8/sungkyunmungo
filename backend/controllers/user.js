@@ -26,13 +26,13 @@ exports.postOtherProfile = async (req, res, next) => {
     const info = {
       userName: user.userName,
       keyWord: user.keyWord,
-      email: user.email,
       totalTrade: user.totalTrade,
       rate: user.rate,
-      phone: user.phone,
       numEvaluators: user.numEvaluators,
       major: userInfo.major,
       campus: userInfo.campus,
+      description: userInfo.description,
+      photo: userInfo.photo,
     };
 
     res.json({
@@ -73,6 +73,8 @@ exports.getMyProfile = async (req, res, next) => {
       numEvaluators: user.numEvaluators,
       major: userInfo.major,
       campus: userInfo.campus,
+      description: userInfo.description,
+      photo: userInfo.photo,
     };
 
     res.json({
@@ -95,17 +97,14 @@ exports.patchProfile = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader.split(" ")[1];
   try {
-    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    req.decoded = jwt.verify(token, config.JWT);
     const { userName } = req.decoded;
-    const { passWord, studentId, name, major, campus } = req.body;
+    const { major, campus, photo, phone, description } = req.body;
 
-    const user = await User.findOneAndUpdate(
-      { userName },
-      { passWord, studentId, name }
-    );
+    const user = await User.findOneAndUpdate({ userName }, { phone });
     const userInfo = await UserInfo.updateOne(
       { user: user._id },
-      { major, campus }
+      { major, campus, photo, description }
     );
 
     res.json({
