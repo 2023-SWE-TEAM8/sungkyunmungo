@@ -26,9 +26,11 @@ export const TopNavLI = styled.li`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  cursor: pointer;
 `
 
 export const LogoImage = styled.img`
+  cursor: pointer;
   width: 200px;
 `
 export const TopNav = styled.div``
