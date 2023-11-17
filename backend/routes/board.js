@@ -1,5 +1,5 @@
-const express = require('express');
-const productsController = require('../controllers/board');
+const express = require("express");
+const productsController = require("../controllers/board");
 const router = express.Router();
 
 /**
@@ -13,11 +13,11 @@ const router = express.Router();
 // router.get("/product",productsController.getAddBoard);
 
 // 전체 post 하는 함수
-router.get("/postAll",productsController.postBoardAll);
+router.get("/postAll", productsController.postBoardAll);
 
 // page 별로 post 하는 함수
 //http://localhost:8000/board/posts?page=10&limit=10
-router.get("/posts",productsController.postBoardPage);
+router.get("/posts", productsController.postBoardPage);
 /**
  * @swagger
  * /board/posts:
@@ -60,9 +60,8 @@ router.get("/posts",productsController.postBoardPage);
  *                  type: integer
  */
 
-
 // 데이터 입력하는 함수
-router.post("/posts/write", productsController.postBoard)
+router.post("/posts/write", productsController.postBoard);
 /**
  * @swagger
  * /board/posts/write:
@@ -124,8 +123,33 @@ router.post("/posts/write", productsController.postBoard)
  *                  type: object
  */
 
+
 http://localhost:8000/board/posts/search?searchTerm=Architecture&campus=NSC&status=판매중&page=1&limit=10&condition=중&major=software
 router.get("/posts/search", productsController.searchProduct) //검색하는 함수
+
+router.get("/posts/search", productsController.searchProduct); //검색하는 함수
+
+router.post("/posts/status", productsController.postStatus); //검색하는 함수
+
+//드롭다운용 전공 조회
+router.get("/majors", productsController.getAllMajor);
+/**
+ * @swagger
+ * /board/majors:
+ *   get:
+ *    summary: "드롭다운용 전공 조회"
+ *    description: "드롭다운용 전공 조회"
+ *    tags: [Boards]
+ *    responses:
+ *      "200":
+ *        description: 드롭다운용 전공 조회 완료.
+ *        content:
+ *          application/json:
+ *           schema:
+ *              example: ["math", "english", "software"]
+ */
+
+
 
 http://localhost:8000/board/posts/byId?id=65562c93e2cd7b7d551540e7
 router.get("/posts/byId", productsController.getProductById) // id를 기준으로 찾아오기

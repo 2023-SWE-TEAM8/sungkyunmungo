@@ -43,7 +43,7 @@ const productSchema = Schema({
   },
   status: {
     type: String,
-    enum: ["판매중", "거래 완료"],
+    enum: ["판매중", "판매 완료"],
     default: "판매중",
   },
   createdDt: {

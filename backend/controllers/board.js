@@ -11,12 +11,12 @@ exports.postBoardAll = (req, res, next) => {
             return res.send({ success: false, err });
             //에러가 발생 안할 경우에
         }
-        else{
+        else {
             data = article_api; //api 데이터를 data 변수에 담는다.
             res.status(200).json({
-            // 에러가 발생 안했으므로. json으로 던져준다.
-            success: true,
-            data: data,
+                // 에러가 발생 안했으므로. json으로 던져준다.
+                success: true,
+                data: data,
             });
         }
     });
@@ -47,26 +47,36 @@ exports.postBoardPage = async (req, res, next) => {
             query.campus = campus;
         }
 
-        var count = await Product.countDocuments(query);
-        var maxPage = Math.ceil(count / limit);
-        var posts = await Product.find(query)
-            .sort("-createdAt")
-            .skip(skip)
-            .limit(limit)
-            .exec();
+    var skip = (page - 1) * limit;
+    var query = {};
 
-        res.status(200).json({
-            success: true,
-            data: posts,
-            currentPage: page,
-            maxPage: maxPage,
-            limit: limit,
-        });
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({ success: false, error: err.message });
+    if (major !== "all") {
+      query.major = major; // If a specific major is provided, filter by it
     }
-}
+    if (condition !== "all") {
+      query.condition = condition;
+    }
+
+    var count = await Product.countDocuments(query);
+    var maxPage = Math.ceil(count / limit);
+    var posts = await Product.find(query)
+      .sort("-createdAt")
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    res.status(200).json({
+      success: true,
+      data: posts,
+      currentPage: page,
+      maxPage: maxPage,
+      limit: limit,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
 
 exports.postBoard = async (req, res, next) => {
     try {
@@ -98,7 +108,7 @@ exports.postBoard = async (req, res, next) => {
             "message": "게시글 작성에 성공하였습니다.",
             "data": newProduct // Optional: Return the created product
         });
-    } 
+    }
     catch (err) {
         console.error(err); // Log the error for debugging purposes
         res.status(500).json({
@@ -106,6 +116,7 @@ exports.postBoard = async (req, res, next) => {
             "isSuccess": false,
             "message": "서버에서 오류가 발생했습니다. 나중에 다시 시도하세요"
         });
+
     }
 };
 
@@ -199,6 +210,7 @@ exports.searchProduct = async (req, res, next) => {
         // 몽고DB에서 데이터를 찾을 때 제품 이름에 대한 검색을 수행
         const foundProducts = await Product.find({ title: regex, ...query });
 
+
         if (foundProducts.length === 0) {
             return res.status(404).json({ message: '검색 결과가 없습니다.' });
         }
@@ -207,6 +219,7 @@ exports.searchProduct = async (req, res, next) => {
         var count = foundProducts.length;
         var maxPage = Math.ceil(count / limit);
         var posts = foundProducts.slice(skip, skip + limit);
+
 
         res.status(200).json({
             success: true,
@@ -220,6 +233,13 @@ exports.searchProduct = async (req, res, next) => {
         console.error(error);
         res.status(500).json({ message: '서버에서 오류가 발생했습니다. 나중에 다시 시도하세요' });
     }
+    res.status(200).json(foundProducts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "서버에서 오류가 발생했습니다. 나중에 다시 시도하세요",
+    });
+  }
 };
 
 
@@ -257,5 +277,35 @@ exports.getProductById = async (req, res, next) => {
 };
 
 
+//메인페이지 전공 드롭다운용 함수
+exports.getAllMajor = async (req, res, next) => {
+    try {
+        const existMajors = await Product.distinct('major');
 
+        res.status(200).json(existMajors);
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: '서버에서 오류가 발생했습니다. 나중에 다시 시도하세요' });
+    }
+}
+
+exports.postStatus = async (req, res, next) => {
+  try {
+    const { _id, status } = req.body;
+
+    const productInfo = await Product.updateOne({ _id }, { status });
+
+
+    res.json({
+      message: "판매 상태 변경 완료",
+      isSuccess: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "서버에서 오류가 발생했습니다. 나중에 다시 시도하세요",
+    });
+  }
+};
 
