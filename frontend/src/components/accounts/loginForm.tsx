@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import * as S from './loginForm.styled'
 
 const loginForm = () => {
-  // const { dispatch } = useAppContext()
   const router = useRouter()
   const [id, setId] = useState('')
   const [password, setPassword] = useState('')
@@ -20,7 +19,6 @@ const loginForm = () => {
   }
 
   const handleLogin = (e) => {
-    // Todo: 로그인 API 통신
     async function fn() {
       const data = { userName: id, passWord: password }
       try {
@@ -34,6 +32,7 @@ const loginForm = () => {
         } = response
 
         localStorage.setItem('jwtToken', token)
+        localStorage.setItem('userID', id)
         router.push('/')
       } catch (error) {
         alert('에러 발생, 잠시 후 다시 시도해주세요.')
