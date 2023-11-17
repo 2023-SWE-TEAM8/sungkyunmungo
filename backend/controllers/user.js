@@ -26,6 +26,8 @@ exports.postOtherProfile = async (req, res, next) => {
     const info = {
       userName: user.userName,
       keyWord: user.keyWord,
+      email: user.email,
+      phone: user.phone,
       totalTrade: user.totalTrade,
       rate: user.rate,
       numEvaluators: user.numEvaluators,

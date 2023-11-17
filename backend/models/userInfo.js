@@ -20,9 +20,11 @@ const userInfoSchema = new Schema({
   },
   description: {
     type: String,
+    default: "",
   },
   photo: {
     type: String,
+    default: "",
   },
 });
 

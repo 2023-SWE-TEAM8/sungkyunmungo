@@ -2,9 +2,8 @@
 import { use, useEffect, useRef, useState } from 'react'
 import * as F from './profile.styled'
 import Axios from 'axios'
-
+import AWS from 'aws-sdk'
 const myProfile = () => {
-  const [images, setImages] = useState('/logo.png')
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [phone, setPhone] = useState('')
@@ -12,6 +11,8 @@ const myProfile = () => {
   const [major, setMajor] = useState('')
   const [rate, setRate] = useState(0)
   const [numEvaluators, setNumEvaluators] = useState(0)
+  const [description, setDescription] = useState('')
+  const [photo, setPhoto] = useState('/logo.png')
   const inputFile = useRef(null)
 
   useEffect(() => {
@@ -28,7 +29,6 @@ const myProfile = () => {
             withCredentials: true,
           },
         )
-
         const {
           data: {
             info: {
@@ -39,6 +39,8 @@ const myProfile = () => {
               rate,
               numEvaluators,
               campus,
+              photo,
+              description,
             },
           },
         } = response
@@ -49,6 +51,12 @@ const myProfile = () => {
         setPhone(phone)
         setRate(rate)
         setNumEvaluators(numEvaluators)
+        setDescription(description)
+        if (photo.length === 0) {
+          setPhoto('/logo.png')
+        } else {
+          setPhoto(photo)
+        }
       } catch (error) {
         alert(error)
       }
@@ -56,11 +64,40 @@ const myProfile = () => {
     fn()
   }, [])
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const { files } = e.target
+    const S3_BUCKET = 'skmg-bucket'
+    const REGION = 'ap-northeast-2'
+
+    AWS.config.update({
+      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+    })
+
+    const s3 = new AWS.S3({
+      params: { Bucket: S3_BUCKET },
+      region: REGION,
+    })
+
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: files[0].name,
+      Body: files[0],
+    }
+
+    const upload = s3
+      .putObject(params)
+      .on('httpUploadProgress', (evt) => {
+        console.log(`Uploading ${parseInt((evt.loaded * 100) / evt.total)}%`)
+      })
+      .promise()
+
     if (files && files.length) {
-      setImages(URL.createObjectURL(files[0]))
-      alert(images)
+      await upload.then((err, data) => {
+        console.log(err)
+        const fileUrl = `https://skmg-bucket.s3.ap-northeast-2.amazonaws.com/${files[0].name}`
+        setPhoto(fileUrl)
+      })
     }
   }
 
@@ -72,18 +109,25 @@ const myProfile = () => {
     const token = localStorage.getItem('jwtToken')
     document.cookie = `token=${token}`
     async function fn() {
+      const data = {
+        major,
+        campus,
+        photo,
+        phone,
+        description,
+      }
       try {
         const response = await Axios.patch(
           'http://localhost:8000/user/profile/',
+          data,
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              major,
-              campus,
             },
             withCredentials: true,
           },
         )
+        alert('프로필이 업데이트 되었습니다.')
       } catch (error) {
         alert(error)
       }
@@ -99,6 +143,8 @@ const myProfile = () => {
       setMajor(value)
     } else if (name === 'campus') {
       setCampus(value)
+    } else if (name === 'description') {
+      setDescription(value)
     }
   }
 
@@ -107,7 +153,7 @@ const myProfile = () => {
       <F.verticalWrapper>
         <p>ID 및 이메일은 수정할 수 없습니다.</p>
         <F.RoundedImageObject
-          src={images}
+          src={photo}
           onClick={onButtonClick}
           inputFile={inputFile}
           handleFileUpload={handleFileUpload}
@@ -162,7 +208,12 @@ const myProfile = () => {
           onChange={handleChange}
         />
       </F.horizontalWrapper>
-      <F.TextAreaWithLabel label="자기소개" />
+      <F.TextAreaWithLabel
+        label="자기소개"
+        name="description"
+        value={description}
+        onChange={handleChange}
+      />
       <F.AuthButton onClick={handleSubmit}>등록하기</F.AuthButton>
     </F.AuthWrapper>
   )

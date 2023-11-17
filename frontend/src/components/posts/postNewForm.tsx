@@ -29,8 +29,8 @@ const postNewForm = () => {
     const REGION = 'ap-northeast-2'
 
     AWS.config.update({
-      accessKeyId: '',
-      secretAccessKey: '',
+      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
     })
 
     const s3 = new AWS.S3({
@@ -59,11 +59,11 @@ const postNewForm = () => {
         await upload.then((err, data) => {
           console.log(err)
           // Fille successfully uploaded
-          const fileUrl = s3.getSignedUrl('getObject', {
-            Bucket: S3_BUCKET,
-            Key: files[0].name,
-          })
-          // setImages([...images, URL.createObjectURL(files[0])])
+          // const fileUrl = s3.getSignedUrl('getObject', {
+          //   Bucket: S3_BUCKET,
+          //   Key: files[0].name,
+          // })
+          const fileUrl = `https://skmg-bucket.s3.ap-northeast-2.amazonaws.com/${files[0].name}`
           setImages([...images, fileUrl])
         })
       }

@@ -14,20 +14,10 @@ const userProfile = ({ userID }) => {
   const [major, setMajor] = useState('')
   const [rate, setRate] = useState(0)
   const [numEvaluators, setNumEvaluators] = useState(0)
+  const [photo, setPhoto] = useState('/logo.png')
+  const [description, setDescription] = useState('')
 
   const inputFile = useRef(null)
-
-  const handleFileUpload = (e) => {
-    const { files } = e.target
-    if (files && files.length) {
-      setImages(URL.createObjectURL(files[0]))
-      alert(images)
-    }
-  }
-
-  const onButtonClick = () => {
-    inputFile.current.click()
-  }
 
   useEffect(() => {
     setUserId(userID)
@@ -60,10 +50,11 @@ const userProfile = ({ userID }) => {
               rate,
               numEvaluators,
               campus,
+              description,
+              photo,
             },
           },
         } = response
-
         setUserName(userName)
         setEmail(email)
         setCampus(campus)
@@ -71,21 +62,21 @@ const userProfile = ({ userID }) => {
         setPhone(phone)
         setRate(rate)
         setNumEvaluators(numEvaluators)
-      } catch (error) {
-        alert(error)
-      }
+        setDescription(description)
+        if (photo.length === 0) {
+          setPhoto('/logo.png')
+        } else {
+          setPhoto(photo)
+        }
+      } catch (error) {}
     }
     fn()
   }, [userID])
 
-  const test = () => {
-    alert('A!')
-  }
-
   return (
     <F.AuthWrapper desc={`${userID}의 프로필`}>
       <F.verticalWrapper>
-        <F.RoundedImageObject src={images}></F.RoundedImageObject>
+        <F.RoundedImageObject src={photo}></F.RoundedImageObject>
       </F.verticalWrapper>
       <F.horizontalWrapper>
         <F.InputWithLabel label="ID" readonly="readonly" value={userName} />
@@ -103,7 +94,11 @@ const userProfile = ({ userID }) => {
         />
         <F.InputWithLabel label="전화번호" readonly="readonly" value={phone} />
       </F.horizontalWrapper>
-      <F.TextAreaWithLabel label="자기소개" readonly="readonly" />
+      <F.TextAreaWithLabel
+        label="자기소개"
+        readonly="readonly"
+        value={description}
+      />
     </F.AuthWrapper>
   )
 }
