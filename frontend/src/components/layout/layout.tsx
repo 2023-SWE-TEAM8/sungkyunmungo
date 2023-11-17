@@ -1,11 +1,12 @@
 import * as S from './layout.styled'
 
 // Todo: AppLayout 수정 필요
-const layout = ({ color, children }) => {
+const layout = ({ children, homeNum }) => {
   return (
     <div className="app">
       <div className="header">
-        <S.LogoImage src="/logo.png" alt="SKMG"></S.LogoImage>
+        {homeNum ? <div /> : <S.LogoImage src="/logo.png" alt="SKMG" />}
+
         <S.TopNav>
           <S.TopNavUL>
             <S.TopNavLI>회원가입</S.TopNavLI>
