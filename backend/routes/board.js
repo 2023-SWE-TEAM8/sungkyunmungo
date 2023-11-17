@@ -126,4 +126,23 @@ router.get("/posts/search", productsController.searchProduct); //검색하는 �
 
 router.post("/posts/status", productsController.postStatus); //검색하는 함수
 
+//드롭다운용 전공 조회
+router.get("/majors", productsController.getAllMajor);
+/**
+ * @swagger
+ * /board/majors:
+ *   get:
+ *    summary: "드롭다운용 전공 조회"
+ *    description: "드롭다운용 전공 조회"
+ *    tags: [Boards]
+ *    responses:
+ *      "200":
+ *        description: 드롭다운용 전공 조회 완료.
+ *        content:
+ *          application/json:
+ *           schema:
+ *              example: ["math", "english", "software"]
+ */
+
+
 module.exports = router;
