@@ -5,9 +5,10 @@ const { createTransport } = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
 exports.postOtherProfile = async (req, res, next) => {
-  const { token } = req.cookies;
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
   try {
-    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    req.decoded = jwt.verify(token, config.JWT);
     const { userName } = req.body;
 
     const user = await User.findOne({ userName });
@@ -25,11 +26,15 @@ exports.postOtherProfile = async (req, res, next) => {
     const info = {
       userName: user.userName,
       keyWord: user.keyWord,
+      email: user.email,
+      phone: user.phone,
       totalTrade: user.totalTrade,
       rate: user.rate,
       numEvaluators: user.numEvaluators,
       major: userInfo.major,
       campus: userInfo.campus,
+      description: userInfo.description,
+      photo: userInfo.photo,
     };
 
     res.json({
@@ -49,11 +54,23 @@ exports.postOtherProfile = async (req, res, next) => {
 };
 
 exports.getMyProfile = async (req, res, next) => {
-  const { token } = req.cookies;
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+
   try {
-    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    req.decoded = jwt.verify(token, config.JWT);
     const { userName } = req.decoded;
     const user = await User.findOne({ userName });
+    if (!user) {
+      res.status(404).json({
+        isSuccess: false,
+        message: "유저 정보가 없습니다.",
+        token,
+      });
+
+      return;
+    }
+
     const userInfo = await UserInfo.findOne({ user: user._id });
 
     const info = {
@@ -68,6 +85,8 @@ exports.getMyProfile = async (req, res, next) => {
       numEvaluators: user.numEvaluators,
       major: userInfo.major,
       campus: userInfo.campus,
+      description: userInfo.description,
+      photo: userInfo.photo,
     };
 
     res.json({
@@ -87,19 +106,26 @@ exports.getMyProfile = async (req, res, next) => {
 };
 
 exports.patchProfile = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
   try {
-    const { token } = req.cookies;
-    req.decoded = jwt.verify(req.cookies.token, config.JWT);
+    req.decoded = jwt.verify(token, config.JWT);
     const { userName } = req.decoded;
-    const { passWord, studentId, name, major, campus } = req.body;
+    const { major, campus, photo, phone, description } = req.body;
 
-    const user = await User.findOneAndUpdate(
-      { userName },
-      { passWord, studentId, name }
-    );
+    const user = await User.findOneAndUpdate({ userName }, { phone });
+    if (!user) {
+      res.status(404).json({
+        isSuccess: false,
+        message: "유저 정보가 없습니다.",
+        token,
+      });
+
+      return;
+    }
     const userInfo = await UserInfo.updateOne(
       { user: user._id },
-      { major, campus }
+      { major, campus, photo, description }
     );
 
     res.json({
@@ -123,6 +149,24 @@ exports.postLogin = async (req, res, next) => {
 
     const user = await User.findOne({ userName });
 
+    // 존재하지 않는 아이디
+    if (!user) {
+      res.status(401).json({
+        isSuccess: false,
+        message: "가입되지 않은 사용자입니다.",
+      });
+      return;
+    }
+
+    // 패스워드와 아이디가 다른 경우
+    if (user.passWord !== passWord) {
+      res.status(403).json({
+        isSuccess: false,
+        message: "아이디 또는 패스워드가 잘못 되었습니다.",
+      });
+      return;
+    }
+
     //  정상적인 로그인
     if (user.passWord === passWord) {
       const key = config.JWT;
@@ -141,28 +185,11 @@ exports.postLogin = async (req, res, next) => {
         }
       );
       // res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+
       res.status(200).json({
         message: "로그인에 성공하였습니다.",
         isSuccess: true,
         token,
-      });
-
-      return;
-    }
-
-    // 존재하지 않는 아이디
-    if (!user) {
-      res.status(401).json({
-        isSuccess: false,
-        message: "가입되지 않은 사용자입니다.",
-      });
-      return;
-    }
-    // 패스워드와 아이디가 다른 경우
-    else if (user.passWord !== passWord) {
-      res.status(403).json({
-        isSuccess: false,
-        message: "아이디 또는 패스워드가 잘못 되었습니다.",
       });
       return;
     }
@@ -365,19 +392,17 @@ const userCheck = (docs, field, val) => {
 //user 전체 조회
 exports.findAllUser = async (req, res, next) => {
   try {
-
     var users = await User.find();
 
     res.status(200).json({
       isSuccess: true,
-      data: users
+      data: users,
     });
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, error: error.message });
   }
-}
+};
 
 //user 평점 주기
 exports.rateUser = async (req, res, next) => {
@@ -387,19 +412,25 @@ exports.rateUser = async (req, res, next) => {
 
     // 평점을 받는 유저는 존재해야 한다.
     if (!user) {
-      return res.status(404).json({ success: false, message: "해당 유저가 존재하지 않습니다." });
+      return res
+        .status(404)
+        .json({ success: false, message: "해당 유저가 존재하지 않습니다." });
     }
 
     // 평점은 1~5점 이어야 한다.
     if (rate < 1 || rate > 5) {
-      return res.status(500).json({ success: false, message: "평점은 1~5점 사이어야 합니다." });
+      return res
+        .status(500)
+        .json({ success: false, message: "평점은 1~5점 사이어야 합니다." });
     }
 
     const filter = { _id: userId };
-    const update = { $set: { rate: user.rate + rate, numEvaluators: user.numEvaluators + 1 } };
+    const update = {
+      $set: { rate: user.rate + rate, numEvaluators: user.numEvaluators + 1 },
+    };
 
     const doc = await User.findOneAndUpdate(filter, update, {
-      new: true
+      new: true,
     });
 
     res.status(200).json({
@@ -408,10 +439,8 @@ exports.rateUser = async (req, res, next) => {
       updatedRate: doc.rate,
       updatedNumEvaluators: doc.numEvaluators,
     });
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, error: error.message });
   }
-
-}
+};

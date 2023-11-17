@@ -1,5 +1,5 @@
-const express = require('express');
-const productsController = require('../controllers/board');
+const express = require("express");
+const productsController = require("../controllers/board");
 const router = express.Router();
 
 /**
@@ -60,9 +60,8 @@ router.get("/posts", productsController.postBoardPage);
  *                  type: integer
  */
 
-
 // 데이터 입력하는 함수
-router.post("/posts/write", productsController.postBoard)
+router.post("/posts/write", productsController.postBoard);
 /**
  * @swagger
  * /board/posts/write:
@@ -123,7 +122,9 @@ router.post("/posts/write", productsController.postBoard)
  *                data:
  *                  type: object
  */
-router.get("/posts/search", productsController.searchProduct) //검색하는 함수
+router.get("/posts/search", productsController.searchProduct); //검색하는 함수
+
+router.post("/posts/status", productsController.postStatus); //검색하는 함수
 
 //드롭다운용 전공 조회
 router.get("/majors", productsController.getAllMajor);

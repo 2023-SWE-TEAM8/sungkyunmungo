@@ -19,7 +19,10 @@ const HomeFilter = () => {
     )
     event.preventDefault()
 
-    router.push('/profile/1')
+    router.push(
+      `/search?` +
+        `input=${searchInput}&campus=${campusSelect}&major=${majorSelect}&status=${statusSelect}`,
+    )
   }
 
   const campusFilter = ['자연과학캠퍼스', '인문사회캠퍼스']

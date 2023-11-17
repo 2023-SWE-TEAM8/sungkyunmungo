@@ -28,43 +28,44 @@ exports.postBoardAll = (req, res, next) => {
     });
 }
 
+
 exports.postBoardPage = async (req, res, next) => {
-    try {
-        var page = Math.max(1, parseInt(req.query.page)) || 1;
-        var limit = Math.max(1, parseInt(req.query.limit)) || 10;
-        var major = req.query.major || 'all'; // Get the major query parameter or default to 'all'
-        var condition = req.query.condition || 'all';
+  try {
+    var page = Math.max(1, parseInt(req.query.page)) || 1;
+    var limit = Math.max(1, parseInt(req.query.limit)) || 10;
+    var major = req.query.major || "all"; // Get the major query parameter or default to 'all'
+    var condition = req.query.condition || "all";
 
-        var skip = (page - 1) * limit;
-        var query = {};
+    var skip = (page - 1) * limit;
+    var query = {};
 
-        if (major !== 'all') {
-            query.major = major; // If a specific major is provided, filter by it
-        }
-        if (condition !== 'all') {
-            query.condition = condition;
-        }
-
-        var count = await Product.countDocuments(query);
-        var maxPage = Math.ceil(count / limit);
-        var posts = await Product.find(query)
-            .sort("-createdAt")
-            .skip(skip)
-            .limit(limit)
-            .exec();
-
-        res.status(200).json({
-            success: true,
-            data: posts,
-            currentPage: page,
-            maxPage: maxPage,
-            limit: limit,
-        });
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({ success: false, error: err.message });
+    if (major !== "all") {
+      query.major = major; // If a specific major is provided, filter by it
     }
-}
+    if (condition !== "all") {
+      query.condition = condition;
+    }
+
+    var count = await Product.countDocuments(query);
+    var maxPage = Math.ceil(count / limit);
+    var posts = await Product.find(query)
+      .sort("-createdAt")
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    res.status(200).json({
+      success: true,
+      data: posts,
+      currentPage: page,
+      maxPage: maxPage,
+      limit: limit,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
 
 exports.postBoard = async (req, res, next) => {
     try {
@@ -104,19 +105,34 @@ exports.postBoard = async (req, res, next) => {
             "isSuccess": false,
             "message": "서버에서 오류가 발생했습니다. 나중에 다시 시도하세요"
         });
+
     }
+
+    res.status(200).json({
+      code: 200,
+      isSuccess: true,
+      message: "게시글 작성에 성공하였습니다.",
+      data: newProduct, // Optional: Return the created product
+    });
+  } catch (err) {
+    console.error(err); // Log the error for debugging purposes
+    res.status(500).json({
+      code: 500,
+      isSuccess: false,
+      message: "서버에서 오류가 발생했습니다. 나중에 다시 시도하세요",
+    });
+  }
 };
 
-
 exports.searchProduct = async (req, res, next) => {
-    try {
-        const searchTerm = req.query.searchTerm; // 검색어는 쿼리 파라미터로 
+  try {
+    const searchTerm = req.query.searchTerm; // 검색어는 쿼리 파라미터로
 
-        // 정규표현식을 사용하여 검색어에 대한 패턴을 생성
-        const regex = new RegExp(searchTerm, 'i'); // 'i' -> 대소문자를 구분하지 않도록
+    // 정규표현식을 사용하여 검색어에 대한 패턴을 생성
+    const regex = new RegExp(searchTerm, "i"); // 'i' -> 대소문자를 구분하지 않도록
 
-        // 몽고DB에서 데이터를 찾을 때 제품 이름에 대한 검색을 수행
-        const foundProducts = await Product.find({ title: regex });
+    // 몽고DB에서 데이터를 찾을 때 제품 이름에 대한 검색을 수행
+    const foundProducts = await Product.find({ title: regex });
 
         if (foundProducts.length === 0) {
             return res.status(404).json({ message: '검색 결과가 없습니다.' });
@@ -128,8 +144,18 @@ exports.searchProduct = async (req, res, next) => {
     catch (error) {
         console.error(error);
         res.status(500).json({ message: '서버에서 오류가 발생했습니다. 나중에 다시 시도하세요' });
+
     }
+
+    res.status(200).json(foundProducts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "서버에서 오류가 발생했습니다. 나중에 다시 시도하세요",
+    });
+  }
 };
+
 
 //메인페이지 전공 드롭다운용 함수
 exports.getAllMajor = async (req, res, next) => {
@@ -144,4 +170,21 @@ exports.getAllMajor = async (req, res, next) => {
     }
 }
 
+exports.postStatus = async (req, res, next) => {
+  try {
+    const { _id, status } = req.body;
 
+    const productInfo = await Product.updateOne({ _id }, { status });
+
+
+    res.json({
+      message: "판매 상태 변경 완료",
+      isSuccess: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "서버에서 오류가 발생했습니다. 나중에 다시 시도하세요",
+    });
+  }
+};
