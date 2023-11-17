@@ -6,17 +6,14 @@ import HomeFilter from '@/components/home/homeFilter'
 
 const Search = () => {
   const router = useRouter()
-  const inputData = router.query.input
-  const inputCampus = router.query.campus
-  const { major } = router.query
 
   return (
     <Layout homeNum>
       <HomeFilter />
       <ThumbnailBox te="4" num="20" title="검색결과" />
-      <div>
+      {/* <div>
         {inputData} {inputCampus} {major}
-      </div>
+      </div> */}
     </Layout>
   )
 }

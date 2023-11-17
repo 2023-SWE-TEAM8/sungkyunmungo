@@ -4,10 +4,12 @@ import { useRouter } from 'next/router'
 import Divider from '@mui/material/Divider'
 import Switch from '@mui/material/Switch'
 
+import axios from 'axios'
 import * as DP from './detailPost.styled'
 
 const DetailedPost = ({ curUser, descData }) => {
-  const [checked, setChecked] = useState(descData.status == '판매중')
+  const [checked, setChecked] = useState()
+  const router = useRouter()
   const isInitialMount = useRef(true)
 
   const style = {
@@ -26,15 +28,36 @@ const DetailedPost = ({ curUser, descData }) => {
   }
 
   useEffect(() => {
+    if (descData.status != '') {
+      setChecked(descData.status == '판매중')
+    }
+  }, [descData.status])
+
+  useEffect(() => {
     ;(async () => {
-      if (isInitialMount.current) {
-        isInitialMount.current = false // 첫 마운트를 기록합니다.
-      } else {
-        alert(`change to ${checked == true ? '판매중' : '판매완료'}`)
-        // const data = await (
-        //   await fetch(`https://picsum.photos/v2/list?page=${te}&limit=${num}`)
-        // ).json()
-        // setImgData(data)
+      if (descData.status != undefined) {
+        if (checked != undefined) {
+          const url = 'http://localhost:8000/board/posts/status'
+          // 추가된 부분
+          const axiosConfig = {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          }
+
+          const sendParam = {
+            _id: router.query.id,
+            status: checked ? '판매중' : '판매완료',
+          }
+
+          await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(sendParam),
+          })
+        }
       }
     })()
   }, [checked])
@@ -56,7 +79,7 @@ const DetailedPost = ({ curUser, descData }) => {
 
         {curUser == descData.writer ? (
           <DP.curUserToggle>
-            {checked ? '판매중' : '판매완료'}
+            {checked ? '판매중' : '거래 완료'}
             <Switch
               checked={checked}
               onChange={handleChange}
@@ -64,7 +87,9 @@ const DetailedPost = ({ curUser, descData }) => {
             />
           </DP.curUserToggle>
         ) : (
-          <DP.SendButton>메세지 보내기</DP.SendButton>
+          <DP.SendButton>
+            {checked ? '메시지 보내기' : '거래 완료'}
+          </DP.SendButton>
         )}
       </DP.TitleBox>
       <Divider sx={style} />

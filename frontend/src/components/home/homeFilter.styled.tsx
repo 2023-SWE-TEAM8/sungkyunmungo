@@ -12,6 +12,7 @@ export const LogoImg = styled.img`
   width: 25%;
   max-width: 250px;
   object-fit: scale-down;
+  cursor: pointer;
 `
 
 export const FilterBox = styled.form`

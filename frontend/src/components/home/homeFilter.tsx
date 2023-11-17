@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import * as HF from './homeFilter.styled'
@@ -12,11 +12,13 @@ const HomeFilter = () => {
   const [majorSelect, setMajorSelected] = useState('')
   const [statusSelect, setStatusSelected] = useState('')
 
+  const [majorFilter, setMajorFilter] = useState([])
+
   const onClickSearch = (event) => {
-    alert(
-      `/search?` +
-        `input=${searchInput}&campus=${campusSelect}&major=${majorSelect}&status=${statusSelect}`,
-    )
+    // alert(
+    //   `/search?` +
+    //     `input=${searchInput}&campus=${campusSelect}&major=${majorSelect}&status=${statusSelect}`,
+    // )
     event.preventDefault()
 
     router.push(
@@ -25,14 +27,26 @@ const HomeFilter = () => {
     )
   }
 
-  const campusFilter = ['자연과학캠퍼스', '인문사회캠퍼스']
-  const majorFilter = ['소프트웨어', '기계공학', '전기전자']
-  const sellStatusFilter = ['판매중', '판매완료']
+  const campusFilter = ['NSC', 'HSSC']
+  const sellStatusFilter = ['판매중', '판매 완료']
+
+  useEffect(() => {
+    ;(async () => {
+      const tempData = await (
+        await fetch(`http://localhost:8000/board/majors`)
+      ).json()
+
+      setMajorFilter(tempData)
+    })()
+  }, [])
 
   return (
     <>
       <HF.HomeFilterBox>
-        <HF.LogoImg src="/logo.png" />
+        <HF.LogoImg
+          src="/logo.png"
+          onClick={(event) => (router.asPath != '/' ? router.push('/') : '')}
+        />
         <HF.FilterBox onSubmit={onClickSearch}>
           <HF.SearchBox>
             <HF.Search
@@ -111,7 +125,9 @@ const HomeFilter = () => {
       </HF.HomeFilterBox>
       <HF.PostBox>
         <HF.PostTile>판매하실 전공서적이 있으신가요?</HF.PostTile>
-        <HF.PostButton>판매 등록</HF.PostButton>
+        <HF.PostButton onClick={(event) => router.push('/posts/new')}>
+          판매 등록
+        </HF.PostButton>
       </HF.PostBox>
     </>
   )

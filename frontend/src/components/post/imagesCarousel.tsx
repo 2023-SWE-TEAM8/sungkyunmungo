@@ -6,6 +6,9 @@ import { Carousel } from 'react-responsive-3d-carousel'
 import * as IC from './imagesCarousel.styled'
 
 const ImageCar = ({ imageUrl }) => {
+  const onErrorImg = (e) => {
+    e.target.src = '/assets/noImg.jpg'
+  }
   return (
     <IC.TopBox>
       <IC.CarBox>
@@ -19,7 +22,7 @@ const ImageCar = ({ imageUrl }) => {
           indicatorsActiveColor="rgb(0,0,0)"
         >
           {imageUrl.map((el) => {
-            return <img src={el} alt="example-image-1" />
+            return <img src={el} alt="example-image-1" onError={onErrorImg} />
           })}
         </Carousel>
       </IC.CarBox>

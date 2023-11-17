@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
@@ -9,9 +10,16 @@ import * as TB from './thumbnailBox.styled'
 
 const ThumbnailBox = ({ te, num, title }) => {
   const [numIn, setNumIn] = useState(num)
-  const [imgData, setImgData] = useState({})
+  const [imgData, setImgData] = useState({
+    success: true,
+    data: [{ imageUrl: [], price: 0, description: '', status: false }],
+  })
+
   const [favorite, setFavorite] = useState([])
   const [open, setOpen] = useState(false)
+
+  const [targetCampus, setTargetCampus] = useState('')
+  const [targetMajor, setTargetMajor] = useState('')
 
   const [targetName, setTargetName] = useState('')
 
@@ -20,31 +28,130 @@ const ThumbnailBox = ({ te, num, title }) => {
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const campusFilter = ['자연과학캠퍼스', '인문사회캠퍼스']
-  const majorFilter = ['소프트웨어', '기계공학', '전기전자']
-  const sellStatusFilter = ['판매중', '판매완료']
+  const [majorFilter, setMajorFilter] = useState([])
+  const campusFilter = ['NSC', 'HSSC']
+  const sellStatusFilter = ['판매중', '판매 완료']
 
   const addFilter = [...campusFilter, ...majorFilter]
 
+  const onErrorImg = (e) => {
+    e.target.src = '/assets/noImg.jpg'
+  }
+
   useEffect(() => {
     ;(async () => {
-      const data = await (
-        await fetch(`https://picsum.photos/v2/list?page=${te}&limit=${num}`)
-      ).json()
-      setImgData(data)
+      let tempData
+      if (te == '1' || te == '3') {
+        tempData = await (
+          await fetch(`http://localhost:8000/board/posts?limit=${num}`)
+        ).json()
+      } else if (te == '2') {
+        // favorite
+        setFavorite([
+          localStorage.getItem('fav_camp'),
+          localStorage.getItem('fav_major'),
+        ])
 
-      setFavorite(['전기전자', '소프트', '자연과학캠퍼스'])
+        tempData = await (
+          await fetch(
+            `http://localhost:8000/board/posts/search?searchTerm=&campus=${
+              localStorage.getItem('fav_camp') == null
+                ? ''
+                : localStorage.getItem('fav_camp')
+            }&status=&page=1&limit=${num}&condition=&major=${
+              localStorage.getItem('fav_major') == null
+                ? ''
+                : localStorage.getItem('fav_major')
+            }`,
+          )
+        ).json()
+      }
+
+      setImgData(tempData)
+
+      const tempDataMajor = await (
+        await fetch(`http://localhost:8000/board/majors`)
+      ).json()
+
+      setMajorFilter(tempDataMajor)
     })()
   }, [])
 
   useEffect(() => {
     ;(async () => {
-      const data = await (
-        await fetch(`https://picsum.photos/v2/list?page=${te}&limit=${numIn}`)
-      ).json()
-      setImgData(data)
+      let tempData
+      if (router.isReady) {
+        if (te == '4') {
+          tempData = await (
+            await fetch(
+              `http://localhost:8000/board/posts/search?searchTerm=${router.query.input}&campus=${router.query.campus}&status=${router.query.status}&page=1&limit=${num}&major=${router.query.major}`,
+            )
+          ).json()
+        }
+        setImgData(tempData)
+      }
+    })()
+  }, [router.isReady, router.query])
+
+  useEffect(() => {
+    ;(async () => {
+      // alert(te)
+      let tempData
+      if (te == '1' || te == '3') {
+        tempData = await (
+          await fetch(`http://localhost:8000/board/posts?limit=${numIn}`)
+        ).json()
+      } else if (te == '2') {
+        // favorite
+        tempData = await (
+          await fetch(
+            `http://localhost:8000/board/posts/search?searchTerm=&campus=${
+              localStorage.getItem('fav_camp') == null
+                ? ''
+                : localStorage.getItem('fav_camp')
+            }&status=&page=1&limit=${numIn}&condition=&major=${
+              localStorage.getItem('fav_major') == null
+                ? ''
+                : localStorage.getItem('fav_major')
+            }`,
+          )
+        ).json()
+      } else if (te == '4') {
+        // search
+        tempData = await (
+          await fetch(
+            `http://localhost:8000/board/posts/search?searchTerm=${router.query.input}&campus=${router.query.campus}&status=${router.query.status}&page=1&limit=${numIn}&major=${router.query.major}`,
+          )
+        ).json()
+      }
+      setImgData(tempData)
     })()
   }, [numIn])
+
+  useEffect(() => {
+    // alert(`${te}favorite`)
+    ;(async () => {
+      let tempData
+      if (router.isReady) {
+        if (te == '2') {
+          tempData = await (
+            await fetch(
+              `http://localhost:8000/board/posts/search?searchTerm=&campus=${
+                localStorage.getItem('fav_camp') == null
+                  ? ''
+                  : localStorage.getItem('fav_camp')
+              }&status=&page=1&limit=${num}&condition=&major=${
+                localStorage.getItem('fav_major') == null
+                  ? ''
+                  : localStorage.getItem('fav_major')
+              }`,
+            )
+          ).json()
+        }
+        setImgData(tempData)
+      }
+    })()
+  }, [favorite])
 
   const moreOnclick = async () => {
     const updatedNumIn = parseInt(numIn, 10) + parseInt(num, 10)
@@ -56,7 +163,32 @@ const ThumbnailBox = ({ te, num, title }) => {
   }
 
   const addFav = () => {
-    alert(targetName)
+    if (campusFilter.includes(targetName)) {
+      localStorage.setItem('fav_camp', targetName)
+    } else if (majorFilter.includes(targetName)) {
+      localStorage.setItem('fav_major', targetName)
+    }
+
+    setFavorite([
+      localStorage.getItem('fav_camp'),
+      localStorage.getItem('fav_major'),
+    ])
+
+    setOpen(false)
+  }
+
+  const DelFav = (targetEl) => {
+    if (campusFilter.includes(targetEl)) {
+      localStorage.removeItem('fav_camp')
+    } else if (majorFilter.includes(targetEl)) {
+      localStorage.removeItem('fav_major')
+    }
+
+    setFavorite([
+      localStorage.getItem('fav_camp'),
+      localStorage.getItem('fav_major'),
+    ])
+    alert('삭제 완료')
   }
 
   const style = {
@@ -84,10 +216,14 @@ const ThumbnailBox = ({ te, num, title }) => {
         {te == 2 ? (
           <>
             {favorite.map((el_fa) => {
-              return (
+              return el_fa == null ? (
+                ''
+              ) : (
                 <TB.FavoriteDiv>
                   {el_fa}
-                  <TB.DelFavorite>X</TB.DelFavorite>
+                  <TB.DelFavorite onClick={(event) => DelFav(el_fa)}>
+                    X
+                  </TB.DelFavorite>
                 </TB.FavoriteDiv>
               )
             })}
@@ -138,23 +274,36 @@ const ThumbnailBox = ({ te, num, title }) => {
           ''
         )}
       </TB.TitleDiv>
-      <TB.ThumbnailBox>
-        {Object.values(imgData).map((el, index) => {
-          return index == numIn - 1 ? (
-            <TB.MoreButtonWrapper onClick={moreOnclick}>
-              <TB.ThumbnailImg src={el.download_url} key={el.id} last={1} />
-              <TB.MoreButton>+ 더보기</TB.MoreButton>
-            </TB.MoreButtonWrapper>
-          ) : (
-            <TB.ThumbnailImg
-              src={el.download_url}
-              key={el.id}
-              last={0}
-              onClick={(event) => goPost(el.id, event)}
-            />
-          )
-        })}
-      </TB.ThumbnailBox>
+
+      {imgData == undefined ? (
+        <TB.TitleDiv> Loading </TB.TitleDiv>
+      ) : imgData.message == undefined ? (
+        <TB.ThumbnailBox>
+          {imgData.data.map((el, index) => {
+            return index == numIn - 1 ? (
+              <TB.MoreButtonWrapper onClick={moreOnclick}>
+                <TB.ThumbnailImg
+                  src={el.imageUrl[0]}
+                  key={el._id}
+                  last={1}
+                  onError={onErrorImg}
+                />
+                <TB.MoreButton>+ 더보기</TB.MoreButton>
+              </TB.MoreButtonWrapper>
+            ) : (
+              <TB.ThumbnailImg
+                src={el.imageUrl[0]}
+                key={el._id}
+                last={0}
+                onClick={(event) => goPost(el._id, event)}
+                onError={onErrorImg}
+              />
+            )
+          })}
+        </TB.ThumbnailBox>
+      ) : (
+        <TB.TitleDiv> 결과가 없습니다 </TB.TitleDiv>
+      )}
     </>
   )
 }
