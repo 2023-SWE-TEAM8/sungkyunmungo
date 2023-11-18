@@ -28,36 +28,25 @@ const signUpForm = () => {
   const handleSendEmailVerificationCode = () => {
     // Todo: 일단은 모든 메일에 대해 인증코드를 발송할 수 있는 상태임.
 
-    // if (!generalEmailRegex.test(email)) {
-    //   alert('이메일 형식을 지켜주세요')
-    // } else if (!skkuEmailRegex.test(email)) {
-    //   alert(
-    //     '성균관대 재학생만 이용 가능합니다. \nskku.edu 혹은 g.skku.edu 도메인 이메일을 사용하세요.',
-    //   )
-    // } else {
-    //   async function fn() {
-    //     const data = { email }
-    //     try {
-    //       alert('잠시만 기다려주세요!')
-    //       await Axios.post('http://localhost:8000/user/mail/', data)
-    //       alert('인증코드가 발송되었습니다.')
-    //     } catch (error) {
-    //       alert('에러 발생')
-    //     }
-    //   }
-    //   fn()
-    // }
-    async function fn() {
-      const data = { email }
-      try {
-        alert('잠시만 기다려주세요!')
-        await Axios.post('http://localhost:8000/user/mail/', data)
-        alert('인증코드가 발송되었습니다.')
-      } catch (error) {
-        alert('에러 발생')
+    if (!generalEmailRegex.test(email)) {
+      alert('이메일 형식을 지켜주세요')
+    } else if (!skkuEmailRegex.test(email)) {
+      alert(
+        '성균관대 재학생만 이용 가능합니다. \nskku.edu 혹은 g.skku.edu 도메인 이메일을 사용하세요.',
+      )
+    } else {
+      async function fn() {
+        const data = { email }
+        try {
+          alert('잠시만 기다려주세요!')
+          await Axios.post('http://localhost:8000/user/mail/', data)
+          alert('인증코드가 발송되었습니다.')
+        } catch (error) {
+          alert('에러 발생')
+        }
       }
+      fn()
     }
-    fn()
   }
 
   const handleCheckUsername = () => {

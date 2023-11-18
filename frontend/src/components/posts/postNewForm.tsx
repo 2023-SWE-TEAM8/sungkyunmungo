@@ -58,11 +58,6 @@ const postNewForm = () => {
       } else {
         await upload.then((err, data) => {
           console.log(err)
-          // Fille successfully uploaded
-          // const fileUrl = s3.getSignedUrl('getObject', {
-          //   Bucket: S3_BUCKET,
-          //   Key: files[0].name,
-          // })
           const fileUrl = `https://skmg-bucket.s3.ap-northeast-2.amazonaws.com/${files[0].name}`
           setImages([...images, fileUrl])
         })
@@ -94,25 +89,35 @@ const postNewForm = () => {
   const handleSubmit = () => {
     async function fn() {
       const writer = localStorage.getItem('userID')
-      const data = {
-        writer,
-        title,
-        price,
-        description,
-        imageUrl: images,
-        campus,
-        major,
-        condition,
-      }
-      try {
-        const response = await Axios.post(
-          'http://localhost:8000/board/posts/write/',
-          data,
-        )
-        alert(response.data.message)
-        router.push('/')
-      } catch (error) {
+
+      if (
+        title === '' ||
+        price === 0 ||
+        description === '' ||
+        images.length === 0
+      ) {
         alert('에러 발생, 잠시 후 다시 시도해주세요.')
+      } else {
+        const data = {
+          writer,
+          title,
+          price,
+          description,
+          imageUrl: images,
+          campus,
+          major,
+          condition,
+        }
+        try {
+          const response = await Axios.post(
+            'http://localhost:8000/board/posts/write/',
+            data,
+          )
+          alert(response.data.message)
+          router.push('/')
+        } catch (error) {
+          alert('에러 발생, 잠시 후 다시 시도해주세요.')
+        }
       }
     }
     fn()
