@@ -79,7 +79,7 @@ const DetailedPost = ({ curUser, descData }) => {
 
         {curUser == descData.writer ? (
           <DP.curUserToggle>
-            {checked ? '판매중' : '거래 완료'}
+            {checked ? '판매중' : '판매완료'}
             <Switch
               checked={checked}
               onChange={handleChange}
@@ -88,7 +88,7 @@ const DetailedPost = ({ curUser, descData }) => {
           </DP.curUserToggle>
         ) : (
           <DP.SendButton>
-            {checked ? '메시지 보내기' : '거래 완료'}
+            {checked ? '메시지 보내기' : '판매완료'}
           </DP.SendButton>
         )}
       </DP.TitleBox>

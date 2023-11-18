@@ -30,7 +30,7 @@ const ThumbnailBox = ({ te, num, title }) => {
 
   const [majorFilter, setMajorFilter] = useState([])
   const campusFilter = ['NSC', 'HSSC']
-  const sellStatusFilter = ['판매중', '판매 완료']
+  const sellStatusFilter = ['판매중', '판매완료']
 
   const addFilter = [...campusFilter, ...majorFilter]
 
