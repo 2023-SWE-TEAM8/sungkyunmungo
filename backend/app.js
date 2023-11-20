@@ -1,12 +1,14 @@
 // const http = require("http");
 // const path = require("path");
+// const bodyParser = require("body-parser");
+// const errorControllers = require("./controllers/error");
 
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const port = 8000; //포트번호 설정
 const express = require("express");
-const bodyParser = require("body-parser");
+
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
@@ -18,12 +20,16 @@ const adminRoutes = require("./routes/admin");
 const boardRoutes = require("./routes/board");
 const userRoutes = require("./routes/user");
 
-// const errorControllers = require("./controllers/error");
-
-//post를 사용할 수 있게
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(express.json());
+//admin bro
+const { adminBro, router } = require("./admin-config"); // 상대 경로에 주의하세요.
+const session = require("express-session");
+app.use(
+  session({
+    secret: "1234567", // 안전하고 강력한 시크릿 키로 교체해야 합니다
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 //DB 설정
 mongoose
@@ -39,9 +45,20 @@ mongoose
 app.use(
   cors({
     origin: "http://localhost:3000",
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+app.use(cookieParser());
 
+app.use(adminBro.options.rootPath, router);
+app.listen(1500, function () {
+  console.log("Listening to Port 1500");
+});
+//post를 사용할 수 있게
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.json());
 //swagger
 const options = {
   definition: {

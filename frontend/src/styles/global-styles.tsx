@@ -14,9 +14,20 @@ const GlobalStyle = styled.createGlobalStyle`
     font-family: 'Jua';
   }
 
+  .react-responsive-3d-carousel__carousel__item {
+    border-radius: 15px !important;
+  }
+
+  .react-responsive-3d-carousel__carousel__list {
+    margin-bottom: 20px !important;
+  }
+
+  .react-responsive-3d-carousel__status {
+    display: none;
+  }
+
   @media only screen and (max-width: 768px) {
     body {
-      background-color: red;
     }
   }
 
@@ -28,8 +39,7 @@ const GlobalStyle = styled.createGlobalStyle`
       'contents contents contents'
       'footer footer footer';
     gap: 1rem;
-    margin: 10px auto;
-    width: 85%;
+    width: 100%;
     max-width: 100%;
 
     .header {
@@ -39,6 +49,7 @@ const GlobalStyle = styled.createGlobalStyle`
       align-items: center;
       padding: 10px 5px;
       background-color: rgba(103, 189, 232, 0.1);
+      padding: 20px;
     }
 
     .contents {
